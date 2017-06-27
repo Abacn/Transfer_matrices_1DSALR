@@ -1,0 +1,38 @@
+* Pfunction_isobaric_*.m:
+	Calculating the isothermal-isobaric partition functions of the 1D microphase former model. The suffix means—-
+	HS - hard spheres. This case has analytical formula.
+	NN - Nearest neighbor interaction counted. Also has analytical form.
+	NNN - Next nearest neighbor counted. Transfer matrix method applied.
+	3NN - Next next nearest neighbor counted. Extend the NNN transfer matrix into a larger one.
+
+* potential.m:
+	potential(r, coeffs) - return the potential of given distance and coefficients. Function been used in various files.
+
+* boltzmanweight.m(r, bcoeffs) - return the Boltzmann weight exp(-beta*u) instead of u. the difference of bcoeffs and coeffs is that bcoeffs=[sigma, lambda, kappa, beta*epsilon, xi]
+
+* calcrho.m
+	Calculating density with given list of temperature (beta), list of pressure in given coefficients. Output the raw data in .mat files ( for plotting usage).
+	Output: data/*.mat
+
+* lowercaccu_calcrho.m
+	Do the same thing as calcrho.m. Instead, use central-2 algorithm in numerical differentiation. This is adequate in data range of normal pressures. Output the raw data in .mat files (for plotting usage).
+
+	Output: data_low/*.dat
+
+* minsearcher.m
+	Search the minimum of thermodynamic integration function h(T, rho). Given a list of temperatures, with given coefficients.
+	Output: data_min/*.dat
+	The data will be processing by python scripts plotmin.py
+
+* onetimeScripts/
+	This folder includes some quick scripts that is not time consuming, and obtain small amount of data
+	** secondB.m; thirdB.m —— Directly calculating second and third virial coefficients.
+	** fourthB.m —— Directly calculating the fourth virial coefficent. But doesn’t walk by now.
+	** criticalT_thirdB.m —— Automatically find the critical temperature respecting to the sign changing of third virial coefficient.
+	** listBs.m —— For printing the B2 and B3 data with given coefficients and list of temperatures. Output to data_Bs/*.dat
+	** listTc_fromB3.m —— Invoking criticalT_thirdB.m. Given list of coefficient xi, searching temperature range, and other coefficients fixed. Printing the result at data_Bs/Tc_*.dat. Notice that filenames only have 4 coefficients here because xi is variable.
+
+==General data naming rules==
+
+Coefficents [sigma, lambda, kappa, epsilon, xi], the corresponding data file is “sigma_lambda_kappa_epsilon_xi.dat”. If the calculation proceeded more than one time (for example, in different temperature range), the problem generate *_1.dat, *_2.dat and so on.
+
