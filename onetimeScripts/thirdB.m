@@ -1,7 +1,10 @@
 %Calculate third virial coefficient
 
-function result = thirdB(Ts, coeffs)
+function result = thirdB(Ts, coeffs, Tol)
 addpath('..');
+if (nargin<3)
+    Tol = 1e-5;
+end
 if (nargin<2)
   close all;
   coeffs=[1,2.5,4,1,1];
@@ -29,11 +32,11 @@ for rp=1:nbeta
   w2 = exp(beta*epsilon)-1;
   w3 = @(r)(exp(-beta*potential(r, coeffs))-1);
   i11 = -sigma^2;
-  i12 = integral2(@(r1, r2)(w1*w2.*w3(r2-r1)), 0, sigma, sigma, centrr,'AbsTol',1e-2,'RelTol',1e-5,'method','iterated');
-  i13 = integral2(@(r1, r2)(w1*w3(r2).*w3(r2-r1)), 0, sigma, centrr, upperr,'AbsTol',1e-2,'RelTol',1e-5,'method','iterated');
-  i22 = integral2(@(r1, r2)(w2*w2.*w3(r2-r1)), sigma, centrr, sigma, centrr,'AbsTol',1e-2,'RelTol',1e-5,'method','iterated');
-  i23 = integral2(@(r1, r2)(w2.*w3(r2).*w3(r2-r1)), sigma, centrr, centrr, upperr,'AbsTol',1e-2,'RelTol',1e-5,'method','iterated');
-  i33 = integral2(@(r1, r2)(w3(r1).*w3(r2).*w3(r2-r1)), centrr, upperr, centrr, upperr,'AbsTol',1e-2,'RelTol',1e-5,'method','iterated');
+  i12 = integral2(@(r1, r2)(w1*w2.*w3(r2-r1)), 0, sigma, sigma, centrr,'AbsTol',1e-2,'RelTol',Tol,'method','iterated');
+  i13 = integral2(@(r1, r2)(w1*w3(r2).*w3(r2-r1)), 0, sigma, centrr, upperr,'AbsTol',1e-2,'RelTol',Tol,'method','iterated');
+  i22 = integral2(@(r1, r2)(w2*w2.*w3(r2-r1)), sigma, centrr, sigma, centrr,'AbsTol',1e-2,'RelTol',Tol,'method','iterated');
+  i23 = integral2(@(r1, r2)(w2.*w3(r2).*w3(r2-r1)), sigma, centrr, centrr, upperr,'AbsTol',1e-2,'RelTol',Tol,'method','iterated');
+  i33 = integral2(@(r1, r2)(w3(r1).*w3(r2).*w3(r2-r1)), centrr, upperr, centrr, upperr,'AbsTol',1e-2,'RelTol',Tol,'method','iterated');
   
   B3s(rp) = -(i11+i22+i33+2*(i12+i13+i23));
 end

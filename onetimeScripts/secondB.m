@@ -3,7 +3,7 @@
 function result = secondB(Ts, coeffs)
 if (nargin<2)
   close all;
-  coeffs=[1,2.5,4,1,100];
+  coeffs=[1,2.5,4,1,1];
   Ts=linspace(0.1, 1);
 end
 betas = 1./Ts;
