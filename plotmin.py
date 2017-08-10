@@ -114,18 +114,12 @@ def Tfilter(Ts, rhos, returnchoice=0):
         return Ts[cutlow:cuthigh], rhos[cutlow:cuthigh], highbound
 
 
-def printRaw(datacollect):
-    for xi in sorted(datacollect.iterkeys()):
-        print(xi)
-        print(datacollect[xi][:, [0,2]])
-
-
 def printB3s(B3collect):
     for xi in sorted(B3collect.iterkeys()):
         print("Xi="+xi)
         print('T\tSlope\tIntercept\tr')
         for Ts, B3s, inter, r_value, _, _ in B3collect[xi]:
-            print('%s\t%.3e\t%f\t%f' % (Ts, B3s, inter, r_value))
+            print('%s\t%.3f\t%f\t%f' % (Ts, B3s, inter, r_value))
 
 
 def statCritical(datacollect):
@@ -137,6 +131,14 @@ def statCritical(datacollect):
         Ts, rhos, criticalT = Tfilter(Ts, rhos)
         data_out[xi] = [Ts, rhos, criticalT]
     return data_out
+
+
+def printRaw(datacollect):
+    data_out = statCritical(datacollect)
+    for xi in sorted(data_out):
+        content = data_out[xi]
+        for rho, y in zip(content[0], content[1]):
+            print "%s\t%.3f\t%.3e" % (xi, rho, y)
 
 
 def draw(datacollect):
@@ -168,21 +170,19 @@ def draw(datacollect):
 
 if __name__ == '__main__':
     path = 'data_min'
-    file_list = [f for f in glob.glob(path+"/*.dat") if re.search(r'1.0_2.5_4.0_1.0_\d+\.\d+\.dat$', f)]
+    file_list = [f for f in glob.glob(path+"/*.dat") if re.search(r'1.0_2.2_4.0_1.0_\d+\.\d+\.dat$', f)]
     datacollect = readData(file_list)
     if len(sys.argv)<2 or sys.argv[1]=='draw':
         draw(datacollect)
     elif sys.argv[1]=='raw':
+        # ./plotmin.py raw > pyout/rhoc-1,2.2,4,1.dat
         printRaw(datacollect)
-    elif sys.argv[1]=='save' and len(sys.argv)>2:
-        fout = open(sys.argv[2], 'w')
+    elif sys.argv[1]=='critical':
+        # ./plotmin.py critical > pyout/Tc-1,2.2,4,1.dat
         data_out = statCritical(datacollect)
         for key in sorted(data_out):
             content = data_out[key]
-            fout.write('Xi=%s, T_critical=%.3f\n' % (key, content[2]))
-            fout.write('T\tRho_c\n')
-            for Ts, rhos in zip(content[0], content[1]):
-                fout.write('%.3f\t%.3e\n' % (Ts, rhos))
+            print('%s\t%.3f' % (key, content[2]))
     elif sys.argv[1]=='B3':
         criticalcollect, rawcollect = readDataPlus(file_list)
         B3collect = clusterB3searcher(criticalcollect, rawcollect)
@@ -193,9 +193,9 @@ Options:
 * draw (default)
     Draw T - rho_critical, and T_critical - Xi
 * raw
-    Print raw data for quick check
-* save filename
-    Save statistic results as a file
+    Print raw data
+* critical
+    print critical temperature of different xi
 * B3
     Fitting the function and obtain the third virial coefficent B3(cluster)
 '''

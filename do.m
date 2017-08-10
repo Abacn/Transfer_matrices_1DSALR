@@ -1,9 +1,9 @@
 % coeffs = [\sigma, \lambda, \kappa, \epsilon, \zeta]
 close all;
-coeffs=[1,1.5,4,1,1];
+coeffs=[1,2.5,4,1,1];
 beta=1;
 % targetp = 2.0;ps = [-0.02 -0.01 0 0.01 0.02]+targetp;
-ps=linspace(0.1,2,100);
+ps=[0.01,linspace(0.1,5,20)];
 rp=1;
 rst = zeros(size(ps));    % next next nearest neighbor
 rst_NNN = zeros(size(ps)); % nearest neighbor

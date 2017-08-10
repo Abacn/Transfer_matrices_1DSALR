@@ -1,36 +1,77 @@
-% draw (\beta p - rho)/rho^2 vs. rho lines
+% draw p vs. rho lines in different temperatures
 % coeffs = [\sigma, \lambda, \kappa, \epsilon, \zeta]
+
 close all;
-coeffs=[1,1.5,4,1,1];
-beta=1;
-%ps=linspace(0.1, 10, 50);
-ps=10.^linspace(-4,0,50);
-rp=1;
-rho = zeros(size(ps));    % next next nearest neighbor
-rho_NNN = zeros(size(ps)); % nearest neighbor
-rho_NN = zeros(size(ps)); % nearest neighbor
-rho_HS = zeros(size(ps)); % hard sphere
-for p=ps/beta
-    rho_NNN(rp) = beta/deriv(@(bp)(-log(Pfunc_isobaric(bp, beta, coeffs))),p);
-    %rho(rp) = beta/deriv(@(bp)(-log(Pfunc_isobaric_3NN(bp, beta, coeffs))),p);
-    rho_NN(rp) = beta/deriv(@(bp)(-log(Pfunc_isobaric_NN(bp, beta, coeffs))),p);
-    rp=rp+1;
+writefile = false;
+coeffs=[1,1.5,1.5,0,1];
+ps=[ 0.001];
+%Ts=linspace(0.1,1,10);
+Ts=linspace(0.01,1,50);
+if(writefile)
+suffix='.dat';
+
+% Pick up a filename
+suffix='.dat';
+foldername = 'data_S';
+nm = sprintf('%.1f_%.1f_%.1f_%.1f_%.2f',coeffs(1), coeffs(2), coeffs(3), ...
+             coeffs(4), coeffs(5));
+% Scan if file exist
+flag = true;
+count = 0;
+if ~exist(foldername, 'dir')
+mkdir(foldername);
 end
-rho_HS = ps ./ (coeffs(1)*ps + 1);
+while flag
+if count==0
+fn = strcat(foldername,'/',nm,suffix);
+else
+fn = sprintf('%s/%s_%d%s',foldername,nm,count,suffix);
+end
+if exist(fn, 'file')
+count = count + 1;
+else
+flag = false;
+end
+end
+fprintf('Saveto: %s\n', fn);
+FilePtr = fopen(fn, 'w');
+else
+   FilePtr = 1;
+end
+% use pressure, not beta*pressure here
+rq=1;
+Np = size(ps,2);
+S = zeros(length(Ts),Np); 
+Cp = zeros(length(Ts),Np); 
+Pfunc = zeros(length(Ts),Np);
+for p=ps
+  rp=1;
+  for T=Ts
+    %[Cp(rp,rq), S(rp,rq)] = deriv2(@(bT)(bT*log(Pfunc_isobaric_3NN(p, 1/bT, coeffs, 200))),T);
+    %Cp(rp,rq) =Cp(rp,rq)*T;
+    [~, Pfunc(rp,rq)] = deriv2(@(bT)(bT*log(Pfunc_isobaric_HS(p, 1/bT, coeffs, 200))),T);
+    Cp(rp,rq) = log(T^1.5/p)+1.5;
+    rp=rp+1;
+  end
+  rq=rq+1;
+end
 
-y_NN = (ps./rho_NN-1)./rho_NN; % (beta*p-rho)/rho^2
-y_NNN = (ps./rho_NNN-1)./rho_NNN;
-y = (ps./rho-1)./rho; 
-y_HS = coeffs(1)*(ps*coeffs(1)+1);
 
-figure;
-plot(ps,rho,ps,rho_NNN,ps,rho_NN,ps,rho_HS);
-xlabel('\beta p');ylabel('\rho');
-legend('3NN','NNN','NN','HS','Location','northwest');
+%fprintf(FilePtr, '%s\t%s\t%s\t%s\n', 'p', 'T', 'S', 'Cp');
+for i=1:Np
+    %raw_record(FilePtr, ps(i), Ts, S(:,i), Cp(:,i));
+    hold on;
+    plot(Ts, Pfunc(:,i));
+    plot(Ts, Cp(:,i), 'x');
+end
+xlabel('T');ylabel('S');
 
-figure;
-plot(rho,y,rho_NNN,y_NNN,rho_NN,y_NN,rho_HS,y_HS);
-xlabel('\rho');ylabel('(\beta p - \rho)/\rho^2');
-set(gca,'xscale','log');
-legend('3NN','NNN','NN','HS','Location','northwest');
-% gibbs_HS = gibbs; ps_HS=ps; rho_HS=rho;
+%% Functions
+% record the raw data
+function raw_record(FilePtr, p, Ts, S, Cp)
+rp = 1;
+for pbeta=1:length(S)
+    fprintf(FilePtr, '%.3e\t%.3g\t%.4e\t%.4e\n', p,Ts(rp), S(rp), Cp(rp));
+    rp = rp + 1;
+end
+end

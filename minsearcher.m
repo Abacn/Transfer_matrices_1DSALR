@@ -3,30 +3,32 @@
 function minsearcher()
 %% Script
 close all;
-coeffs=[1,2.5,4,1,0.05];
-%Ts = [0.32];
-Ts = linspace(0.1, 0.4, 31);
+coeffs=[1,2.2,4,1,0.0];
+%Ts = [0.12];
+writefile = true;
+Ts = linspace(0.06, 0.3, 25);
 betas=1./Ts;
 Lowlimit = -8;
 NMag = 20;
 NDivide = 10;
 Accu = 1e-2;
-
+if(writefile)
 % Pick up a filename
 suffix='.dat';
+foldername = 'data_min';
 nm = sprintf('%.1f_%.1f_%.1f_%.1f_%.2f',coeffs(1), coeffs(2), coeffs(3), ...
     coeffs(4), coeffs(5));
 % Scan if file exist
 flag = true;
 count = 0;
-if ~exist('data_min', 'dir')
-    mkdir('data_min');
+if ~exist(foldername, 'dir')
+    mkdir(foldername);
 end
 while flag
     if count==0
-        fn = strcat('data_min/',nm,suffix);
+        fn = strcat(foldername,'/',nm,suffix);
     else
-        fn = sprintf('data_min/%s_%d%s',nm,count,suffix);
+        fn = sprintf('%s/%s_%d%s',foldername,nm,count,suffix);
     end
     if exist(fn, 'file')
         count = count + 1;
@@ -36,6 +38,9 @@ while flag
 end
 fprintf('Saveto: %s\n', fn);
 FilePtr = fopen(fn, 'w');
+else
+FilePtr = 1;
+end
 records = [];
 rho = zeros(1, NMag);
 for beta=betas
@@ -89,7 +94,9 @@ for beta=betas
     end
 end
 min_record(FilePtr, records);
+if(writefile)
 fclose(FilePtr);
+end
 end
 
 %% Functions

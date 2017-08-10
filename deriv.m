@@ -105,7 +105,7 @@ else
     case 'forward3'                                           % Three point forward difference
       dfdx=(-f(x+2*h)+4*f(x+h)-3*f(x))/(2*h);
     case 'central4'                                           % Four point central difference
-      dfdx =(-f(x+2*h)+8*f(x+h)-8*f(x-h)+f(x-2*h))/(12*h);
+      dfdx =(f(x-2*h)-f(x+2*h)+8*(f(x+h)-f(x-h)))/(12*h);
     case 'complex'                                            % Complex difference
       dfdx=imag(f(x+h*1i)/h);                                  % This is the *magic*
     otherwise
