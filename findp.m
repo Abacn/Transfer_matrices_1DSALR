@@ -1,48 +1,38 @@
 % Find pressure, given temperature and density
-
+% Secant method
 function p = findp(rho, T, coeffs, tol)
     % start from hard sphere
     if(nargin < 4)
         tol  = 1e-6;
     end
+    N = 200;
     sigma = coeffs(1);
     beta = 1/T;
-    p0 = rho*T/(1-sigma*rho);
-    rho0 = beta/deriv(@(bp)(-log(Pfunc_isobaric_NN(bp, beta, coeffs, 200))),p0);
+    p1 = rho*T/(1-sigma*rho);
+    rho1 = findrho(p1, beta, coeffs, N);
     % First search a border
-    if(rho0 < rho)
-        while(rho0 < rho)
-            p0 = 2*p0;
-            rho0 = beta/deriv(@(bp)(-log(Pfunc_isobaric_3NN(bp, beta, coeffs, 200))),p0);
-        end
-        plow = p0/2;
-        phigh = p0;
-    elseif(rho0 > rho)
-        while(rho0 > rho)
-            p0 = p0/2;
-            rho0 = beta/deriv(@(bp)(-log(Pfunc_isobaric_3NN(bp, beta, coeffs, 200))),p0);
-        end
-        plow = p0;
-        phigh = p0*2;
+    if(rho1 < rho)
+            p2 = 2*p1;
+    elseif(rho1 > rho)
+        p2 = p1/2;
     else
-        p = p0;  % although coincidence is imposible if it is not hard sphere.
+        p = p1;
         return;
     end
-    pcen = (phigh + plow)/2;
-    delt = phigh - plow;
-    err = delt/pcen;
-    % binary search
+    rho2 = findrho(p2, beta, coeffs, N);
+    subp = p2-p1;
+    err = abs(subp/(p2+p1)*2);
     while(err > tol)
-        rho0 = beta/deriv(@(bp)(-log(Pfunc_isobaric_3NN(bp, beta, coeffs, 200))),pcen);
-        if(rho0 < rho)
-            plow = pcen;
-        else
-            phigh = pcen;
+        p0 = p1; p1 = p2;
+        rho0 = rho1; rho1 = rho2;
+        p2 = p1 - (rho1-rho)/(rho1-rho0)*subp;
+        if(p2<=0)
+            p2 = p1 / 10;
         end
-        pcen = (phigh + plow)/2;
-        delt = phigh - plow;
-        err = delt/pcen;
+        rho2 = findrho(p2, beta, coeffs, N);
+        subp = p2-p1;
+        err = abs(subp/(p2+p1)*2);
     end
-    p = pcen;
+    p = p2;
 end
 

@@ -7,8 +7,8 @@ if (nargin<3)
 end
 if (nargin<2)
   close all;
-  coeffs=[1,2.5,4,1,1];
-  Ts=linspace(0.29, 0.31, 10);
+  coeffs=[1,2.2,4,1,1];
+  Ts=linspace(0.1, 0.3, 10);
 end
 betas = 1./Ts;
 
@@ -41,7 +41,8 @@ for rp=1:nbeta
   B3s(rp) = -(i11+i22+i33+2*(i12+i13+i23));
 end
 if(nargin<2)
-  plot(Ts, alignvalue(B3s));
+  %plot(Ts, alignvalue(B3s));
+  plot(Ts, B3s);
   %set(gca,'yscale','log');
 end
 if(nargout==1)

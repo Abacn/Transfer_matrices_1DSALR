@@ -11,8 +11,9 @@
 function zeta = Pfunc_isobaric(P, beta, coeffs, divide)
     % set 2*pi*m/h^2 = 1
     if ( nargin<4)
-        divide = 100;
+        divide = 200;
     end
+    divide = divide + 1;
     sigma = coeffs(1);
     kappasigma = coeffs(3)*sigma;
     

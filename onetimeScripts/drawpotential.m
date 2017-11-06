@@ -1,4 +1,5 @@
 addpath('..');
+close all;
 xright = 6;
 a = linspace(0.999, xright, 1000);
 coeffs1 = [1, 2.5, 4, 1, 1];
@@ -10,15 +11,17 @@ b3=potential(a, coeffs3);
 b1(1) = 999;
 b2(1) = 999;
 b3(1) = 999;
-plot(a,b1,a,b2,a,b3);
+psize=1;unifyfigure;
+plot(a,b1,'-',a,b2,'--',a,b3,'-.');
 xlim([0 xright]);
 ylim([-1.5 2]);
 ax = gca;
 ax.Box = 'off';
 ax.XAxisLocation = 'origin';
-xlabel('r');
-ylabel('u(r)');
+xlabel('$r$', 'Interpreter', 'Latex');
+ylabel('$u(r)$', 'Interpreter', 'Latex');
 legend('\xi=1', '\xi=0.5', '\xi=0.1');
 legend boxoff;
+set(gca,'fontname','Times New Roman');
 set(gca,'fontsize',16);
 

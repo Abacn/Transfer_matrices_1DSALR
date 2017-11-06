@@ -4,10 +4,10 @@ function calcrho()
 close all;
 writefile = false;
 coeffs=[1,2.5,4,1,1];
-Ts=[0.3 0.5 1];
+Ts=[1/0.720446];
 betas=1 ./ Ts;
-%ps=[linspace(0.01,0.1,10), linspace(0.1,1,10), 1.5, linspace(2, 10, 9)];
-ps=[1.25 2.25];
+ps=[linspace(0.01,0.1,10), linspace(0.1,1,10), 1.5, linspace(2, 10, 9)];
+%ps=[0.0001 0.001 0.005];
 
 if(writefile)
 suffix='.dat';

@@ -16,5 +16,5 @@ function pot = potential(rs, coeffs)
         end
         pot(index) = u;
         index = index + 1;
-    end;
+    end
 end
