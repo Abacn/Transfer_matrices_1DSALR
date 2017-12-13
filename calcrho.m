@@ -4,9 +4,9 @@ function calcrho()
 close all;
 writefile = false;
 coeffs=[1,2.5,4,1,1];
-Ts=[1/0.720446];
+Ts=[0.2];
 betas=1 ./ Ts;
-ps=[linspace(0.01,0.1,10), linspace(0.1,1,10), 1.5, linspace(2, 10, 9)];
+ps=[5e-3];
 %ps=[0.0001 0.001 0.005];
 
 if(writefile)
@@ -47,7 +47,7 @@ rho = zeros(length(ps),Nbeta); % NNN
 for beta=betas
   rp=1;
   for p=ps/beta
-    rho(rp,rq) = beta/deriv(@(bp)(-log(Pfunc_isobaric_3NN(bp, beta, coeffs, 200))),p);
+    rho(rp,rq) = beta/deriv(@(bp)(-log(Pfunc_isobaric_3NN(bp, beta, coeffs, 300))),p);
     rp=rp+1;
   end
   rq=rq+1;

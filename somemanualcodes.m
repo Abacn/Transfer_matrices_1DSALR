@@ -46,16 +46,20 @@ elseif(7==part)
     coeffs = [1, 2.5, 4, 1, 1];
     P = 1e-2;
     T = 0.2;
-    xs = 0:5;
-    start = 297;
-    ys = [];
-    Zs = [];
+    beta = 1/T;
+    xs = 0:10;
+    start = 200;
+    ys = zeros(size(xs));
+    Zs = zeros(size(xs));
+    rp = 1;
     for x=xs
-        Zs(x+1) = Pfunc_isobaric_3NN(P, 1/T, coeffs, start+x);
-        ys(x+1) = findrho(P, 1/T, coeffs, start+x);
+        ys(rp) = beta/deriv(@(bp)(-log(Pfunc_isobaric_3NN_dv(bp, beta, coeffs, start+x))),P);
+        rp = rp + 1;
     end
-    figure;plot(xs+start, ys);
-    figure;plot(xs+start, Zs);
+    xs = xs + start;
+    figure;plot(xs, ys);
+    fprintf("%d\t%.4f\n", [xs; ys]);
+    % save('oneTimeData/checkm_mod1.mat','coeffs','P','T','xs','ys');
 %% draw S(k), data from g(r)
 elseif(8==part)
     Tstr = '0.2';

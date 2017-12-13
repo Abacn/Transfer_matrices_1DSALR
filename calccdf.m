@@ -1,14 +1,14 @@
 % calccdf.m
 % Calculate cluster distribution function
-writefile = true;
-coeffs=[1,2.5,4,1,0.1];
+writefile = false;
+coeffs=[1,2.5,4,1,1];
 %Ts=linspace(0.1,1,10);
-Ts=[0.2,0.3,0.4];
+Ts=[0.25];
 N = 20;
 
 option = 'rho'; % 'p' or 'rho'
 if 'rho'==option
-    rhos = [1e-5,5e-5,1e-4,5e-4,1e-3,5e-3,1e-2,5e-2,1e-1,5e-1,linspace(0.2,0.8,4)];
+    rhos = [1e-2,5e-2,1e-1,5e-1,linspace(0.2,0.8,4)];
 else
     ps = [2e-2,3e-2];
 end

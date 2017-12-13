@@ -70,10 +70,11 @@ for rp=1:length(rhodatas)
     else
         set(axnow,'XTick',[1e-8 1e-4],'FontName','Times New Roman');
     end
+    set(axnow,'YTick',[-1e6 -1e3],'FontName','Times New Roman');
     if(1==rp)
-        set(axnow,'YTick',[-1e6 -1e3],'FontName','Times New Roman');
+        ;
     else
-        set(axnow,'YTick',[]);
+        set(axnow,'YTickLabel',[]);
     end
     % xlabel('\rho'); 
     % mark the minimum
@@ -94,7 +95,7 @@ for rp=1:length(rhodatas)
     ylim([-1e6 -1]);
     set(gca,'xscale','log');
     set(gca,'yscale','log');
-    box(axnow,'off');
+    % box(axnow,'off');
     if(1==rp)
         ylabel('$h(\rho)$', 'Interpreter', 'LaTeX', 'FontSize', 14);
     end
@@ -124,11 +125,12 @@ for rp=1:length(rhodatas)
     ylim([1e-8 1e-0]);
     set(gca,'xscale','log');
     set(gca,'yscale','log');
-    box(axnow,'off');
+    % box(axnow,'off');
+    set(axnow,'YTick',[1e-8 1e-4 1],'FontName','Times New Roman');
     if(1==rp)
-        set(axnow,'YTick',[1e-8 1e-4 1],'FontName','Times New Roman');
+        ;
     else
-        set(axnow,'YTick',[]);
+        set(axnow,'YTickLabel',[]);
     end
     set(axnow,'XTick',[1e-8 1e-4]);
     set(axnow,'XTickLabel',[]);

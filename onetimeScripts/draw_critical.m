@@ -1,9 +1,10 @@
 % choice
 % 1: draw T-rho_c, cmc with T
 % 2: draw T-rho_c where B_3 changes sign.
-% 3: draw terminal clustering temperature
+% 3: draw terminal clustering temperature (x)
 % 4: draw cmc from cdf
-% 5: draw terminal clustering temperature by CDF
+% 5: draw terminal clustering temperature by CDF (x)
+% 6: draw terminal clustering temperature from h and CDF
 
 function draw_critical(choice, lambda)
 % draw rho-h(rho)
@@ -11,10 +12,10 @@ function draw_critical(choice, lambda)
 close all;
 addpath('..');
 if nargin<2
-    lambda = 2;
+    lambda = 5;
 end
 if nargin<1
-    choice = 5;
+    choice = 6;
 end
 if(choice==1)
     if(lambda==2)
@@ -22,30 +23,39 @@ if(choice==1)
     elseif(lambda==5)
         rhodata=load('../pyout/rhoc-1,2.5,4,1.dat');
     end
-    pickedXi = [0.0, 0.1, 0.5, 1, 4];
+    pickedXi = [0.0, 1, 2];
     lt = length(pickedXi);
-	psize=2;unifyfigure; hold on;
+	psize=2;unifyfigure;
 	for ind=1:lt
         tdata = rhodata(rhodata(:,1) == pickedXi(ind), [3,2]); % data of specific temperature
         plot2(tdata);
+        if 1==ind
+             hold on;
+        end
+    end
+    set(gca, 'ColorOrderIndex', 1);
+    	for ind=1:lt
+        tdata = rhodata(rhodata(:,1) == pickedXi(ind), [3,2]); % data of specific temperature
+        plot(tdata(end,1),tdata(end,2), '*', 'Markersize', 8);
     end
     if(lambda==2)
         ylim([0.06 0.3])
         xlim([1e-8, 2e-2]);
+        set(gca,'XTick',10.^linspace(-8,-2,4));
         set(gca,'YTick',linspace(0.06,0.3,4));
     elseif(lambda==5)
         ylim([0.0 0.4]);
-        xlim([1e-8, 2e-2]);
+        xlim([1e-7, 1e-1]);
+        set(gca,'XTick',10.^linspace(-7,-1,4));
         set(gca,'YTick',linspace(0.0,0.4,3));
     end
     set(gca,'xscale','log');
     %set(gca,'fontsize',20);
-    set(gca,'XTick',10.^linspace(-8,-2,4));
-    legend('\xi=0','\xi=0.1', '\xi=0.5','\xi=1','\xi=4' ,'Location','southeast');
+    %legend('\xi=0','\xi=1','\xi=2' ,'Location','southeast');
     ylabel('$T$', 'Interpreter', 'LaTeX');
-    xlabel('\rho_{cmc}');
-    legend boxoff;
-    
+    xlabel('$\rho_{ccd}[h]$', 'Interpreter', 'LaTeX');
+    %legend boxoff;
+    unifyfigureend;
     if 2==lambda
         print(fig,'render/rhoc-2.2.eps','-depsc');
     elseif 5==lambda
@@ -112,18 +122,21 @@ elseif(choice==3)
  legend boxoff;
  
  xlabel('\xi');
- ylabel('$T_c$','Interpreter', 'LaTeX');
+ ylabel('$T_t$','Interpreter', 'LaTeX');
  print(fig,'render/Tc.eps','-depsc');
 % draw cmc from cdf
 elseif(choice==4)
- pickedXi = {'0.00';'0.10'; '0.50'; '1.00'};
+ pickedXi = {'0.00';'1.00'; '2.00'};
  sprefix  = strcat('../data_cdf/t_1.0_2.', num2str(lambda) ,'_4.0_1.0_');
  fin = cellfun(@(str)strcat(sprefix, str, '.dat'), pickedXi, 'UniformOutput', false);
  lenfin = length(fin);
- psize=2;unifyfigure; hold on;
+ psize=2;unifyfigure;
  set(gca,'ColorOrderIndex',1);
  for rp=1:lenfin
     plot(nan, nan);
+    if(1==rp)
+        hold on;
+    end
  end
  for rp=1:lenfin
     fname = fin{rp};
@@ -142,23 +155,28 @@ elseif(choice==4)
         end
         nowrange = index(rq):index(rq+1);
         set(gca,'ColorOrderIndex',rp);
-        plot(data(nowrange, 1), data(nowrange, 3), mark);
+        plot(data(nowrange, 3), data(nowrange, 1), mark);
+        if 3==nowtype
+            set(gca,'ColorOrderIndex',rp);
+            plot(data(nowrange(end), 3), data(nowrange(end), 1), '*', 'markers',10);
+        end
     end
  end
- set(gca,'yscale','log');
- xlim([0.1 0.6]);
- ylim([0.999e-5, 1]);
- set(gca,'XTick',linspace(0.1,0.5,3));
- set(gca,'YTick',10.^linspace(-5,-1,3));
- xlabel('$T$','Interpreter', 'LaTeX');
- legend('\xi=0','\xi=0.1','\xi=0.5', '\xi=1','Location', 'southeast');
- legend boxoff;
+ set(gca,'xscale','log');
+ ylim([0 0.4]);
+ xlim([1e-7, 1e-1]);
+ set(gca,'YTick',linspace(0,0.8,5));
+ set(gca,'XTick',10.^linspace(-7,-1,4));
+ ylabel('$T$','Interpreter', 'LaTeX');
+ %legend('\xi=0','\xi=1', '\xi=2','Location', 'southeast');
+ %legend boxoff;
+ unifyfigureend;
  if 2==lambda
         print(fig,'render/rhoccdf-2.2.eps','-depsc');
  elseif 5==lambda
-        ylabel('$\rho_{c-CDF}$','Interpreter', 'LaTeX');
+        xlabel('$\rho_{ccd}$[CDF]','Interpreter', 'LaTeX');
         print(fig,'render/rhoccdf-2.5.eps','-depsc');
-    end
+ end
 
 % draw terminal clustering temperature by CDF
 elseif 5==choice
@@ -196,13 +214,66 @@ elseif 5==choice
      end
  end
  ylim([0.15 0.6]);
- xlabel('\xi');ylabel('$T_{c-CDF}$', 'Interpreter', 'LaTeX');
+ xlabel('\xi');ylabel('$T_{t-CDF}$', 'Interpreter', 'LaTeX');
  %legend('\lambda=2.5','\lambda=2.2');
  %legend boxoff;
  set(gca,'XTick',linspace(0,4,5));
  set(gca,'YTick',linspace(0.2,0.6,5));
   print(fig,'render/Tccdf.eps','-depsc');
  %end  % debug. should be commented
+elseif 6==choice
+ restat = false;
+ if 5==lambda
+     rhodata=load('../pyout/Tc-1,2.5,4,1.dat');
+     Bdata = dlmread('../data_Bs/Tc_1.0_2.5_4.0_1.0.dat','',1,0);
+     if restat
+        data2 = tmtcdf('t_1.0_2.5_4.0_1.0');
+     else
+         data2 = dlmread('../data_cdf/Tc_1.0_2.5_4.0_1.0.dat','',1,0);
+     end
+ elseif 2==lambda
+     rhodata=load('../pyout/Tc-1,2.2,4,1.dat');
+     Bdata = dlmread('../data_Bs/Tc_1.0_2.2_4.0_1.0.dat','',1,0);
+     if restat
+        data2 = tmtcdf('t_1.0_2.2_4.0_1.0');
+     else
+         data2 = dlmread('../data_cdf/Tc_1.0_2.2_4.0_1.0.dat','',1,0);
+     end
+ end
+ psize=2;unifyfigure;
+ %plot(nan, nan, '-k'); hold on;  plot(nan, nan, '--k'); plot(nan, nan, ':k'); plot(nan, nan, '-.k');
+ plot(rhodata(:,1), rhodata(:,2),'b');
+ hold on;
+ plot(Bdata(:,1), Bdata(:,2),'--b');
+ colors = {'b';'r'};
+ [index, content] = changpoint(data2(:,3));
+ index = [1, index];
+ ntypes = length(content);
+ for rq=1:ntypes
+     nowtype = content(rq);
+     if 1==nowtype
+         mark = ':';
+     elseif 2==nowtype
+         mark = '--';
+     else % 3
+         mark = '-.';
+     end
+     nowrange = index(rq):index(rq+1);
+     plot(data2(nowrange, 1), data2(nowrange, 2), strcat(mark, colors{1}));
+     if rq==ntypes
+         plot(data2(nowrange(1), 1), data2(nowrange(1), 2), strcat('*', colors{1}), 'markers', 10);
+     end
+ end
+ 
+ xlim([0 2]);
+ ylim([0.15 0.6]);
+ xlabel('\xi');ylabel('$T_{t}$', 'Interpreter', 'LaTeX');
+ legend({'$T_t[h]$','$T_t[B_3]$','$T_t$[CDF-condensation]', '$T_t$[CDF-clustering]'}, 'Interpreter', 'LaTeX');
+ legend boxoff;
+ set(gca,'XTick',linspace(0,2,5));
+ set(gca,'YTick',linspace(0.2,0.6,5));
+ unifyfigureend;
+  print(fig,strcat('render/Tccdf-l2.',num2str(lambda),'.eps'),'-depsc');
 end
 end
 

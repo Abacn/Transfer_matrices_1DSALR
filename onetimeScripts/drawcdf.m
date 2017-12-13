@@ -17,20 +17,26 @@ if 1==option  % compare results of different methods
     tmat = strcat('../data_cdf/',parastr,'.dat');
     ecmc = strcat('../../simulationdata/ecmc_nvt/secondarydata/cdf/',parastr1,'.dat');
     vmmc = strcat('../../simulationdata/vmmc/secondarydata/cdf/',parastr1,'.dat');
-    cvmc = strcat('../../simulationdata/mc_nvt/secondarydata/cdf/',parastr1,'.dat');
+    cvmc = strcat('../../simulationdata/hmc_nvt/secondarydata/cdf/',parastr1,'.dat');
+    mmc = strcat('../../simulationdata/mmc/secondarydata/cdf/',parastr1,'.dat');
     data_tmat = gettmat(tmat);
-    data_ecmc = getsimu(ecmc);
+    data_mmc = getsimu(mmc);
+    %data_ecmc = getsimu(ecmc);
     data_vmmc = getsimu(vmmc);
-    data_cvmc = getsimu(cvmc);  % conventional monte carlo
+    %data_cvmc = getsimu(cvmc);  % conventional monte carlo
     done = 1;
     tm_check = data_tmat(data_tmat(:,1)==useT & sum(data_tmat(:,2)==useRhos, 2), xs+2);
-    ec_check = data_ecmc(data_ecmc(:,1)==useT & sum(data_ecmc(:,2)==useRhos, 2), xs+2);
-    cv_check = data_cvmc(data_cvmc(:,1)==useT & sum(data_cvmc(:,2)==useRhos, 2), xs+2);
+    ec_check = data_mmc(data_mmc(:,1)==useT & sum(data_mmc(:,2)==useRhos, 2), xs+2);
+    %cv_check = data_cvmc(data_cvmc(:,1)==useT & sum(data_cvmc(:,2)==useRhos, 2), xs+2);
     vm_check = data_vmmc(data_vmmc(:,1)==useT & sum(data_vmmc(:,2)==useRhos, 2), xs+2);
     psize=2;unifyfigure;hold on;
+    
+    % Old script, for linear scale
+    
     nrho = length(useRhos);
     set(gca,'ColorOrderIndex',1);
     plot(xs, tm_check, '-');
+    %{
     plot(nan, nan, 'ko');
     plot(nan, nan, 'kx');
     set(gca,'ColorOrderIndex',1);
@@ -52,28 +58,28 @@ if 1==option  % compare results of different methods
     % small figure
     curpos = get(gcf, 'Position');
     axnow=axes('Position', [0.26, 0.5, 0.35, 0.35]);
+    %}
+
+    set(gca,'ColorOrderIndex',1);
     for ind=1:nrho
-        filted = tm_check(ind,:);
-        plot(xs, filted, '-');
-        if 1==ind
-            hold on;
-        end
+        plot(xs, ec_check(ind,:), 'o','markers',8);
     end
     set(gca,'ColorOrderIndex',1);
     for ind=1:nrho
-        plot(xs, ec_check(ind,:), 'o','markers',6);
+        plot(xs, vm_check(ind,:), 'X','markers',8);
     end
-    set(gca,'ColorOrderIndex',1);
-    for ind=1:nrho
-        plot(xs, vm_check(ind,:), 'X','markers',6);
-    end
+    axnow = gca;
     box(axnow,'off');
     set(axnow, 'YScale' ,'log');
     xlim([1 10]);
-    set(axnow, 'XTick', [1 5 10],'FontName','Times New Roman','fontsize',14);
+    set(axnow, 'XTick', [1 4 7 10]);
+    legend({'\rho=10^{-4}','\rho=10^{-3}','\rho=10^{-2}','\rho=10^{-1}'}, 'Location', 'Southwest');
+    legend boxoff;
+
     ylim([1e-4 1]);
     set(axnow, 'YTick', [1e-4 1e-2 1e0]);
-        
+    xlabel('$n$', 'Interpreter', 'Latex');ylabel('$K(n)$', 'Interpreter', 'Latex');
+    unifyfigureend;
     print(fig,strcat('render/cdf-T',Tstr,'-compare.eps'),'-depsc');
 elseif 2==option || 3==option % different density
     tmat2 = strcat('../data_cdf/',parastr,'.dat');
@@ -99,12 +105,12 @@ elseif 2==option || 3==option % different density
     set(gca,'ColorOrderIndex',1);
     %legend('10^{-4}', '10^{-3}', '10^{-2}', '10^{-1}');
     %legend boxoff;
-    xlim([1 10]);ylim([0 1]);
-    set(gca,'XTick',linspace(2,10,5));
+    xlim([1 7]);ylim([0 1]);
+    set(gca,'XTick',linspace(1,7,4));
     set(gca,'YTick',linspace(0,1,6));
     set(gca,'fontsize',16);
     xlabel('$n$', 'Interpreter', 'Latex');ylabel('$K(n)$', 'Interpreter', 'Latex');
-    
+    unifyfigureend;
     if 3==option
         curpos = get(gcf, 'Position');
         axnow=axes('Position', [0.4, 0.5, 0.4, 0.32]);
@@ -121,6 +127,7 @@ elseif 2==option || 3==option % different density
         set(axnow, 'XTick', [1 10 20],'FontName','Times New Roman','fontsize',14);
         ylim([1e-10 1]);
         set(axnow, 'YTick', [1e-10 1e-5 1e0]);
+        unifyfigureend;
     end
     print(fig,strcat('render/cdf-T',Tstr,'.eps'),'-depsc');
 end

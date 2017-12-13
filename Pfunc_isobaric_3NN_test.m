@@ -8,11 +8,12 @@
 % 0, (r > \kappa*\sigma)
 % set 2*pi*m/h^2 = 1
 % consider next next nearest neighbor
-function zeta = Pfunc_isobaric_3NN(P, beta, coeffs, divide)
+function zeta = Pfunc_isobaric_3NN_test(P, beta, coeffs, divide)
     % set 2*pi*m/h^2 = 1
     if ( nargin<4)
-        divide = 100;
+        divide = 300;
     end
+    divide = divide + 1; % add tail
     sigma = coeffs(1);
     kappasigma = coeffs(3)*sigma;
     

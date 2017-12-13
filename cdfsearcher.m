@@ -1,12 +1,12 @@
 % cdfsearcher
 % find the density where a minimum of k(2) happens
-for xis=[0, 0.01, 0.02, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.8, 1, 2, 4]
-% for xis=[, 4]
+%for xis=[0, 0.01, 0.02, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.8, 1, 2, 4]
+for xis=[1 2]
 fclose('all');
 writefile = false;
 coeffs = [1, 2.5, 4, 1, xis];
-Ts = [ 0.15,0.2:0.02:0.58,0.6:0.1:1]; %
-%Ts = [0.32:0.02:0.38];
+%Ts = [ 0.15,0.2:0.02:0.58,0.6:0.1:1]; %
+Ts = [0.1];
 tol = 1e-2;
 bplow = 1e-5;
 bphigh = 1;

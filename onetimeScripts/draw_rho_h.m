@@ -8,7 +8,7 @@ function draw_rho_h(option)
 close all;
 addpath('..');
 if nargin<1
-    option = 2;
+    option = 1;
 end
 choice=4;
 if(choice==1)
@@ -18,7 +18,7 @@ elseif(choice==2)
 elseif(choice==3)
  fname = '../data_min/1.0_2.0_4.0_1.0_1.00.dat';
 elseif(choice==4)
- fname = '../data_min/1.0_2.5_4.0_1.0_0.05.dat';
+ fname = '../data_min/1.0_2.5_4.0_1.0_2.0.dat';
 else
  return;
 end
@@ -27,7 +27,7 @@ dn = chopnum(fname); % get data line
 rhodata=dlmread(fname,'',[dn(1) 0 dn(2) 3]);
 pickedT = [0.1, 0.12, 0.14, 0.16, 0.2, 0.24, 0.3];
 lt = length(pickedT);
-psize=3;unifyfigure; hold on;
+psize=2;unifyfigure; hold on;
 minpoint = zeros(lt,2);
 for ind=1:lt
     tdata = rhodata(rhodata(:,1) == pickedT(ind), 2:4); % data of specific temperature
@@ -63,16 +63,19 @@ dn = chopnum(fname); % get data line
 rhodata=dlmread(fname,'',[dn(1) 0 dn(2) 3]);
 pickedT = [0.1, 0.12, 0.14, 0.16, 0.2, 0.24, 0.3];
 lt = length(pickedT);
-figure; hold on;  % figure
+figure;  % figure
 minpoint = zeros(lt,2);
 for ind=1:lt
     tdata = rhodata(rhodata(:,1) == pickedT(ind), 2:4); % data of specific temperature
     [~, inds] = sort(tdata(:,2));
     stdata = tdata(inds, :);     % sorted
     minpoint(ind,:) = plots(stdata(:,2), stdata(:,1));
+    if 1==ind
+        hold on;
+    end
 end
-set(gca,'XTick',[1e-8 1e-6 1e-4 1e-2 1e0]);
-set(gca,'YTick',[-1e6 -1e4 -1e2 -1e0]);
+%set(gca,'XTick',[1e-8 1e-6 1e-4 1e-2 1e0]);
+%set(gca,'YTick',[-1e6 -1e4 -1e2 -1e0]);
 xlabel('\rho'); ylabel('$\beta p$','Interpreter', 'LaTeX');
 % mark the minimum
 set(0,'defaultfigurecolor',[0 0 0]);
