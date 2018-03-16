@@ -1,12 +1,12 @@
 % cdfsearcher
 % find the density where a minimum of k(2) happens
 %for xis=[0, 0.01, 0.02, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.8, 1, 2, 4]
-for xis=[1 2]
+for xis=0.41:0.02:0.49
 fclose('all');
-writefile = false;
-coeffs = [1, 2.5, 4, 1, xis];
-%Ts = [ 0.15,0.2:0.02:0.58,0.6:0.1:1]; %
-Ts = [0.1];
+writefile = true;
+coeffs = [1, 2.2, 4, 1, xis];
+Ts = 0.20:0.01:0.26; %
+%Ts = [0.1];
 tol = 1e-2;
 bplow = 1e-5;
 bphigh = 1;
@@ -17,29 +17,29 @@ nm = sprintf('t_%.1f_%.1f_%.1f_%.1f_%.2f',coeffs(1), coeffs(2), coeffs(3), ...
          
 %Ts=linspace(0.1,1,19);
 if(writefile)
-% Pick up a filename
-suffix='.dat';
+    % Pick up a filename
+    suffix='.dat';
 
-% Scan if file exist
-flag = true;
-count = 0;
-if ~exist(foldername, 'dir')
-mkdir(foldername);
-end
-while flag
-if count==0
-fn = strcat(foldername,'/',nm,suffix);
-else
-fn = sprintf('%s/%s_%d%s',foldername,nm,count,suffix);
-end
-if exist(fn, 'file')
-count = count + 1;
-else
-flag = false;
-end
-end
-fprintf('Saveto: %s\n', fn);
-FilePtr = fopen(fn, 'w');
+    % Scan if file exist
+    flag = true;
+    count = 0;
+    if ~exist(foldername, 'dir')
+        mkdir(foldername);
+    end
+    while flag
+        if count==0
+            fn = strcat(foldername,'/',nm,suffix);
+        else
+            fn = sprintf('%s/%s_%d%s',foldername,nm,count,suffix);
+        end
+        if exist(fn, 'file')
+            count = count + 1;
+        else
+            flag = false;
+        end
+    end
+    fprintf('Saveto: %s\n', fn);
+    FilePtr = fopen(fn, 'w');
 else
    FilePtr = 1;
 end
@@ -48,6 +48,7 @@ logfile = strcat(foldername,'/cdfsearcher.log');
 LogPtr = fopen(logfile, 'a');
 
 fprintf(LogPtr, '-- %s --\np\tk(1)\tk(2)\tk(3)\n', datestr(clock));
+fprintf(LogPtr, 'parameters: %.2f,%.2f,%.2f,%.2f,%.2f\n', coeffs);
 fprintf(FilePtr, 'T\tp\trho\ttype\n'); % type: 2: k(2)>k(3) or 3: k(2) ,= k(3)
 for T=Ts
     beta = 1/T;

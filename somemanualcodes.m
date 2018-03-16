@@ -1,15 +1,17 @@
-part = 7;
-if (1==part)
+part = 11;
+
 %% Set coeffs
-coeffs = [1, 2.2, 4, 1, 1];
-T = 2;
+coeffs = [1, 2.5, 4, 1, 1];
+T = 0.2;
 beta = 1/T;
-ps = 1e-4;
+ps = 0.1;
 p = ps/beta;
 
+if (1==part)
+    % do nothing
 elseif (2==part)
 %% Calculate density
-rho(rp,rq) = beta/deriv(@(bp)(-log(Pfunc_isobaric_3NN(bp, beta, coeffs, 150))),p)
+rho = beta/deriv(@(bp)(-log(Pfunc_isobaric_3NN_dv(bp, beta, coeffs, 300))),p)
 
 elseif (3==part)
 %% plot, check
@@ -47,19 +49,20 @@ elseif(7==part)
     P = 1e-2;
     T = 0.2;
     beta = 1/T;
-    xs = 0:10;
-    start = 200;
+    %xs = round(1./linspace(1/600, 1/100, 50));
+    xs=0:2;
+    start = 300;
     ys = zeros(size(xs));
     Zs = zeros(size(xs));
     rp = 1;
     for x=xs
-        ys(rp) = beta/deriv(@(bp)(-log(Pfunc_isobaric_3NN_dv(bp, beta, coeffs, start+x))),P);
+        ys(rp) = beta/deriv(@(bp)(-log(Pfunc_isobaric_3NN_sp(bp, beta, coeffs, start+x))),P);
         rp = rp + 1;
     end
     xs = xs + start;
     figure;plot(xs, ys);
     fprintf("%d\t%.4f\n", [xs; ys]);
-    % save('oneTimeData/checkm_mod1.mat','coeffs','P','T','xs','ys');
+    %save('onetimeScripts/oneTimeData/checkm_sp.mat','coeffs','P','T','xs','ys');
 %% draw S(k), data from g(r)
 elseif(8==part)
     Tstr = '0.2';
@@ -121,4 +124,22 @@ elseif(10==part)
     title(strcat('\rho=', srho));
     %xlabel('\rho');ylabel('\tau');legend('mc-nvt', 'vmmc');
     %title(strcat('\rho=', srho));
+%% Test probabilistically lambda_2 mystery
+elseif 11==part
+    T = 0.2;
+    p = 1e-4;
+    testn = 100;
+    countreal = 0;
+    countcomplex = 0;
+    lambdas = zeros(testn,1);
+    for rp=1:testn
+        [qs, ds] = corlen(p, beta, coeffs);
+        lambdas(rp) = ds(2,2);
+        if abs(imag(lambdas(rp)))<1e-10
+            countreal = countreal + 1;
+        else
+            countcomplex = countcomplex + 1;
+        end
+    end
+    disp([realcount, countcomplex]);
 end

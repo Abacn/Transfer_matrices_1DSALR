@@ -8,53 +8,49 @@
 % 0, (r > \kappa*\sigma)
 % set 2*pi*m/h^2 = 1
 % consider next next nearest neighbor
-% Use two part discretization: half of rlist is 1~??1 , another half > ??1
-function zeta = Pfunc_isobaric_3NN_dv(P, beta, coeffs, divide)
+% Use simpson sum to construct transfer matrix
+function zeta = Pfunc_isobaric_3NN_sp(P, beta, coeffs, divide)
+% Simpson rule for numerical integration
 % set 2*pi*m/h^2 = 1
 if ( nargin<4)
     divide = 300;
 end
-divide = divide + 1; % add tail
+divideB = 2*divide + 1; % add tail
 sigma = coeffs(1);
 lambdasigma = coeffs(2)*sigma;
 kappasigma = coeffs(3)*sigma;
 
-optdflag = false;        % optimizing discretization flag
-dPoint = lambdasigma-sigma;
-% The margin (+0) can change. Ex: +1/8, result in different oscillation
-% period. If it is 0, period->infinity and the result nearly monotonically
-% reach to the true value
-if dPoint > sigma
-    divideA = floor(divide/2);
-    divideB = divide - divideA;
-    divide = divideA + divideB;
-    % let error from the discontinuity always cancelled
-    dsA = (dPoint-sigma)/(divideA+0.5);
-    RealdPoint = dPoint - dsA/2;
-    dsB = (kappasigma-RealdPoint)/(divideB-1);
-    dsBA = dsB/dsA;
-    dsBAlist = [ones([divideA,1]); ones([divideB-1, 1]).*dsBA; 1];
-    rlistA = linspace(sigma, RealdPoint-dsA, divideA).'+dsA/2;
-    rlistB = linspace(RealdPoint, kappasigma, divideB).' + dsB/2;
-    rlist = [rlistA; rlistB];
-    optdflag = true;
-    ds = dsA;
-else
-    ds = (kappasigma-sigma)/(divide-1);
-    rlist = linspace(sigma, kappasigma, divide).'+ds*1/2; % +ds/2 % Magic. Increased the accurancy pretty much
-end
-pot = potential(rlist, coeffs);
-pot = pot + P*(rlist-sigma);
-tmat = pot*ones(1,divide);
+ds = (kappasigma-sigma)/divide;
+dsB = (kappasigma-sigma)/(divideB-1);
+
+% First construct a matrix sizes (3*m+1)*(3*m+1)
+rlistB = linspace(sigma, kappasigma, divideB).';
+rlist = rlistB(2:2:end);
+rlist(end+1) = rlistB(end) + ds;
+pot = potential(rlistB, coeffs);
+pot = pot + P*(rlistB-sigma);
+tmatB = pot*ones(1,divideB);
 % tmat: s(i) by s(i+1)
-for rp=1:divide
+for rp=1:divideB
 % plus next nearest neighbor
-tmat(:,rp) = exp(-beta*(tmat(:,rp) + potential(rlist+rlist(rp), ...
-                                               coeffs)));
+    tmatB(:,rp) = exp(-beta*(tmatB(:,rp) + potential(rlistB+rlistB(rp), ...
+                                            coeffs)));
 end
-if optdflag
-    tmat = tmat .* (dsBAlist * ones(1, length(dsBAlist)));
+% Now recover the matrix sizes
+divide = divide + 1;  % add tail
+tmat = zeros(divide, divide);
+tmpind = 1:divide-1;
+% 2D simpson rule for entries
+for rp = tmpind
+    tmat(tmpind, rp) = ( ...
+        tmatB(tmpind*2-1, rp*2-1) + 4*tmatB(tmpind*2-1, rp*2) + tmatB(tmpind*2-1, rp*2+1) ...
+      + 4*tmatB(tmpind*2, rp*2-1) + 16*tmatB(tmpind*2, rp*2) + 4*tmatB(tmpind*2, rp*2+1) ...
+      + tmatB(tmpind*2+1, rp*2-1) + 4*tmatB(tmpind*2+1, rp*2) + tmatB(tmpind*2+1, rp*2+1) ...
+    )/36;
 end
+% 1D simpson rule for NNN tail
+tmat(tmpind, divide) = (tmatB(tmpind*2-1, divideB) + 4*tmatB(tmpind*2, divideB) + tmatB(tmpind*2+1, divideB))/6;
+
 bpks = beta*P*(coeffs(3)-1)*sigma;  % contribution of tail
 tail = exp(-bpks)/(beta*P);
 tmat(divide, 1:divide) = tail/ds; % add tail to the last row

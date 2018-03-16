@@ -3,14 +3,14 @@
 writefile = false;
 coeffs=[1,2.5,4,1,1];
 %Ts=linspace(0.1,1,10);
-Ts=[0.25];
+Ts=[0.28];
 N = 20;
 
-option = 'rho'; % 'p' or 'rho'
+option = 'p'; % 'p' or 'rho'
 if 'rho'==option
-    rhos = [1e-2,5e-2,1e-1,5e-1,linspace(0.2,0.8,4)];
+    rhos = [1e-2 1e-1];
 else
-    ps = [2e-2,3e-2];
+    ps = [1.868e-03];
 end
 foldername = 'data_cdf';
 nm = sprintf('%.1f_%.1f_%.1f_%.1f_%.2f',coeffs(1), coeffs(2), coeffs(3), ...

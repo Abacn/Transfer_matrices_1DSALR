@@ -1,16 +1,8 @@
-% Calculate the partition function (\Zeta/N)
-% P - pressure, beta - temperature,
-% coeffs = [\sigma, \lambda, \kappa, \epsilon, \zeta]
-% which defines SALR potential u = \begin{case}
-% \infty, (r < \sigma) \\
-% -\epsilon, (\sigma <= r < \lambda*\sigma) \\
-% \zeta\epsilon(\kappa-r/\sigma), (\lambda*\sigma <= r < \kappa*\sigma) \\
-% 0, (r > \kappa*\sigma)
-% set 2*pi*m/h^2 = 1
-% consider next next nearest neighbor
-% Use two part discretization: half of rlist is 1~??1 , another half > ??1
-function zeta = Pfunc_isobaric_3NN_dv(P, beta, coeffs, divide)
-% set 2*pi*m/h^2 = 1
+% corlen.m
+% calculate correlation length = 1/ln(lambda_1/lambda_2)
+function [Q, D] = corlen(P, beta, coeffs, divide)
+    % copied from Pfunc_isobaric_3NN_dv
+    % set 2*pi*m/h^2 = 1
 if ( nargin<4)
     divide = 300;
 end
@@ -79,7 +71,5 @@ elist(bind+lindex) = tmat(:,rq) ...
 end
 end
 t2mat = sparse(xlist, ylist, elist, mlen, mlen);
-lmax = eigs(t2mat,1);
-zeta = sqrt(1/beta)*lmax*ds*exp(-beta*P*sigma);
+[Q, D] = eigs(t2mat,3);
 end
-
