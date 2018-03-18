@@ -7,12 +7,11 @@
 % \zeta\epsilon(\kappa-r/\sigma), (\lambda*\sigma <= r < \kappa*\sigma) \\
 % 0, (r > \kappa*\sigma)
 % set 2*pi*m/h^2 = 1
-% consider next next nearest neighbor
+% consider third nearest neighbor
 % N: up to cluster of size N
 % Outputs:
-% ks: cdf(n); pros: marginal probabilities of finding n neighbored particle
-% that belongs to a cluster
-% M_lambda
+% rlist: a list of particle distances s; pros: probability density of the neighbor at distance s
+
 
 function [rlist, pros] = gapdf(P, beta, coeffs, divide)
     if( nargin<4)
