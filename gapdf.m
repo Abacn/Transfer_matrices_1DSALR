@@ -1,10 +1,10 @@
 % Calculate the cluster size distribution function
 % P - pressure, beta - temperature,
-% coeffs = [\sigma, \lambda, \kappa, \epsilon, \zeta]
+% coeffs = [\sigma, \lambda, \kappa, \epsilon, \xu]
 % which defines SALR potential u = \begin{case}
 % \infty, (r < \sigma) \\
 % -\epsilon, (\sigma <= r < \lambda*\sigma) \\
-% \zeta\epsilon(\kappa-r/\sigma), (\lambda*\sigma <= r < \kappa*\sigma) \\
+% \xi\epsilon(\kappa-r/\sigma), (\lambda*\sigma <= r < \kappa*\sigma) \\
 % 0, (r > \kappa*\sigma)
 % set 2*pi*m/h^2 = 1
 % consider third nearest neighbor

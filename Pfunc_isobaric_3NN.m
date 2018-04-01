@@ -1,13 +1,13 @@
 % Calculate the partition function (\Zeta/N)
 % P - pressure, beta - temperature,
-% coeffs = [\sigma, \lambda, \kappa, \epsilon, \zeta]
+% coeffs = [\sigma, \lambda, \kappa, \epsilon, \xi]
 % which defines SALR potential u = \begin{case}
 % \infty, (r < \sigma) \\
 % -\epsilon, (\sigma <= r < \lambda*\sigma) \\
-% \zeta\epsilon(\kappa-r/\sigma), (\lambda*\sigma <= r < \kappa*\sigma) \\
+% \xi\epsilon(\kappa-r/\sigma), (\lambda*\sigma <= r < \kappa*\sigma) \\
 % 0, (r > \kappa*\sigma)
 % set 2*pi*m/h^2 = 1
-% consider next next nearest neighbor
+% consider third next nearest neighbor
 function zeta = Pfunc_isobaric_3NN(P, beta, coeffs, divide)
     % set 2*pi*m/h^2 = 1
     if ( nargin<4)
