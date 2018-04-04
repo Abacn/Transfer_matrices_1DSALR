@@ -11,7 +11,7 @@ For demonstration, run DEMO.m
 - Language: Matlab (work with Matlab R2016a, R2017a)
 - Publication: Hu, Yi, and Patrick Charbonneau. "Clustering and assembly dynamics of a one-dimensional microphase former." Soft Matter (2018). 
 - URL: http://doi.org/10.1039/C8SM00315G
-
+- preprint access: arxiv:1802.05674
 
 ## File Description
 
@@ -28,7 +28,7 @@ discretization.
 
 - cdf.m: Cluster distribution function calculation.
 
-- gapdf.m: Gap distribution funvction
+- gapdf.m: Gap distribution function
 
 - corlen.m: Correlation length calculation, also two-part discretization implemented.
 

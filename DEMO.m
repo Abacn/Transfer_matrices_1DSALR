@@ -1,3 +1,6 @@
+% Transfer matrix method for 1D continuous space SALR model
+% Author:  @Abacn
+
 %% Demonstration of the usage of the functions
 close all;
 
