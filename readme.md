@@ -1,6 +1,6 @@
 # Transfer matrix method for one-dimensional short range repulsion and long range attraction particles
 
-Transfer matrix in a technique to solve the partition function of such simple systems in statistical mechanics where one unit (such as spin, particle) only interacts with its limited neighboring units.
+Transfer matrix is a technique to solve the partition function of such simple systems in statistical mechanics where one unit (such as spin, particle) only interacts with its limited neighboring units.
 
 The code here calculates the partition function of a one-dimensional continuous space model, with particles interact with up to their third nearest neighbors.
 
